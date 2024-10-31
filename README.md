@@ -222,3 +222,5 @@ class _SentryWorkflowInterceptor(WorkflowInboundInterceptor):
                     capture_exception()
         ...
 ```
+
+I left the original unmodified sentry interceptor from the demos (`./sentry_interceptor.py`), but also included another version with both "fixes" applied in `./sentry_interceptor_with_fixes.py`.
