@@ -47,6 +47,7 @@ class _SentryActivityInboundInterceptor(ActivityInboundInterceptor):
 class _SentryWorkflowInterceptor(WorkflowInboundInterceptor):
     async def execute_workflow(self, input: ExecuteWorkflowInput) -> Any:
         # https://docs.sentry.io/platforms/python/troubleshooting/#addressing-concurrency-issues
+        import warnings
         with Hub(Hub.current):
             set_tag("temporal.execution_type", "workflow")
             set_tag("module", input.run_fn.__module__ + "." + input.run_fn.__qualname__)
@@ -64,7 +65,8 @@ class _SentryWorkflowInterceptor(WorkflowInboundInterceptor):
 
                 if not workflow.unsafe.is_replaying():
                     with workflow.unsafe.sandbox_unrestricted():
-                        capture_exception()
+                        with workflow.unsafe.imports_passed_through():
+                            capture_exception()
                 raise e
 
 
